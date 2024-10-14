@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mermaid Flowchart Creator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/9.3.0/mermaid.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+	 <link rel="icon" href="AI_1.png" type="image/png">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+            margin-bottom: 10px;
+        }
+        button {
+            margin-right: 10px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        #flowchart {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Mermaid Flowchart Creator</h1>
+    <textarea id="mermaidInput" placeholder="Enter your Mermaid syntax here...">
+graph TD
+    A[Start] --> B{Is it?}
+    B -->|Yes| C[OK]
+    C --> D[Rethink]
+    D --> B
+    B ---->|No| E[End]
+    </textarea>
+    <br>
+    <button onclick="renderFlowchart()">Render Flowchart</button>
+    <button onclick="downloadSVG()">Download SVG</button>
+    <button onclick="downloadPNG()">Download PNG</button>
+    <div id="flowchart"></div>
+
+    <script>
+        mermaid.initialize({ startOnLoad: false });
+
+        function renderFlowchart() {
+            const input = document.getElementById('mermaidInput').value;
+            const flowchart = document.getElementById('flowchart');
+            flowchart.innerHTML = '';
+            mermaid.render('mermaid-diagram', input, (svgCode) => {
+                flowchart.innerHTML = svgCode;
+            });
+        }
+
+        function downloadSVG() {
+            const svgElement = document.querySelector('#flowchart svg');
+            if (!svgElement) {
+                alert('Please render the flowchart first.');
+                return;
+            }
+            const svgData = new XMLSerializer().serializeToString(svgElement);
+            const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+            const svgUrl = URL.createObjectURL(svgBlob);
+            const downloadLink = document.createElement('a');
+            downloadLink.href = svgUrl;
+            downloadLink.download = 'flowchart.svg';
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        }
+
+        function downloadPNG() {
+            const flowchartDiv = document.getElementById('flowchart');
+            if (!flowchartDiv.querySelector('svg')) {
+                alert('Please render the flowchart first.');
+                return;
+            }
+            html2canvas(flowchartDiv).then(canvas => {
+                const pngUrl = canvas.toDataURL('image/png');
+                const downloadLink = document.createElement('a');
+                downloadLink.href = pngUrl;
+                downloadLink.download = 'flowchart.png';
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+            });
+        }
+
+        // Initial render
+        renderFlowchart();
+    </script>
+</body>
+ <footer>
+        <p>© 2024 Web Mapping. All</p>
+        <p>Developed by AmeisenLAB, driving innovation through AI technology and thought leadership.</p>
+    </footer>
+</html>
